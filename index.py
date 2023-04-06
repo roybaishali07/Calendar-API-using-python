@@ -33,7 +33,6 @@ def authenticate():
         with open(TOKEN_FILE, 'wb') as token:
             pickle.dump(creds, token)
     return creds
-
 def get_events(start_date, end_date):
     creds = authenticate()
     service = build(API_SERVICE_NAME, API_VERSION, credentials=creds)
@@ -45,7 +44,8 @@ def get_events(start_date, end_date):
             timeMax=end_date.isoformat() + 'Z',
             maxResults=1000,
             singleEvents=True,
-            orderBy='startTime'
+            orderBy='startTime',
+            fields='items(summary,location,start,end,attendees,colorId)'
         ).execute()
     except HttpError as error:
         print(f'An error occurred: {error}')
@@ -65,7 +65,14 @@ def write_events(events):
             start = event['start'].get('dateTime', event['start'].get('date'))
             end = event['end'].get('dateTime', event['end'].get('date'))
             summary = event['summary']
+            location = event.get('location', 'No location provided')
+            attendees = event.get('attendees', [])
+            attendee_emails = [attendee['email'] for attendee in attendees]
+            color_id = event.get('colorId', 'No color ID provided')
             f.write(f'{start} to {end} - {summary}\n')
+            f.write(f'Location: {location}\n')
+            f.write(f'Attendees: {attendee_emails}\n')
+            f.write(f'Color ID: {color_id}\n\n')
 
 def main():
     start_date, end_date = read_dates()
