@@ -77,7 +77,7 @@ def write_events(events):
             description = event.get('description', 'No description provided')
             location = event.get('location', 'No location provided')
             attendees = ', '.join([attendee['email'] for attendee in event.get('attendees', [])])
-            writer.writerow([date_str, time_str, weekday_str, summary, description,location, attendees ])
+            writer.writerow([date_str, time_str, weekday_str, summary, description, attendees ])
 
 
 def main():
