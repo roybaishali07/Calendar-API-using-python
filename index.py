@@ -62,22 +62,22 @@ def read_dates():
         end_date = datetime.datetime.strptime(end_date.strip(), '%Y-%m-%d')
     return start_date, end_date
 
-
 def write_events(events):
     with open('output.csv', 'w', newline='') as f:
         writer = csv.writer(f)
-        writer.writerow(['date', 'time', 'weekday', 'summary', 'description', 'attendees'])
+        writer.writerow(['date', 'start_time', 'end_time', 'weekday', 'summary', 'description', 'attendees', 'location'])
         for event in events:
             start_time = datetime.datetime.fromisoformat(event['start'].get('dateTime', event['start'].get('date')))
             end_time = datetime.datetime.fromisoformat(event['end'].get('dateTime', event['end'].get('date')))
             date_str = start_time.date().isoformat()
-            time_str = start_time.time().strftime('%H:%M')
+            start_time_str = start_time.time().strftime('%H:%M')
+            end_time_str = end_time.time().strftime('%H:%M')
             weekday_str = start_time.strftime('%A')
             summary = event['summary']
             description = event.get('description', 'No description provided')
             location = event.get('location', 'No location provided')
             attendees = ', '.join([attendee['email'] for attendee in event.get('attendees', [])])
-            writer.writerow([date_str, time_str, weekday_str, summary, description, attendees ])
+            writer.writerow([date_str, start_time_str, end_time_str, weekday_str, summary, description, attendees, location])
 
 
 def main():
